@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <button
-        className="flex items-center cursor-pointer justify-center absolute bottom-5 right-5 text-2xl text-white p-4 rounded-full bg-blue-600 h-[75px] w-[75px]"
+        className="flex items-center cursor-pointer justify-center absolute bottom-5 right-5 text-xl text-white p-4 rounded-full bg-blue-600 h-[75px] w-[75px]"
         onClick={() => setShowChatBox(!showChatBox)}
       >
         Chat
