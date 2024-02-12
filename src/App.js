@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 
@@ -5,28 +6,45 @@ function App() {
   const [showChatBox, setShowChatBox] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
 
-  const handleMessageSend = () => {
-    if (userInput.trim() !== "") {
-      const newMessage = { text: userInput, sender: "user" };
-      const replyMessage = { text: "This is a static message", sender: "bot" };
-      setMessages([...messages, newMessage, replyMessage]);
-      setUserInput("");
+  const handleMessageSend = async () => {
+    try {
+      const response = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos/2"
+      );
+      console.log(response.data);
+      if (userInput.trim() !== "") {
+        setisLoading(true);
+        const newMessage = { text: userInput, sender: "user" };
+        const replyMessage = {
+          text: response.data.title,
+          sender: "bot",
+        };
+        setMessages([...messages, newMessage, replyMessage]);
+        setisLoading(false);
+        setUserInput("");
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching todo:", error);
+      return null;
     }
   };
 
   return (
     <>
       <button
+        type="button"
         className="flex items-center cursor-pointer justify-center absolute bottom-5 right-5 text-xl text-white p-4 rounded-full bg-blue-600 h-[75px] w-[75px]"
         onClick={() => setShowChatBox(!showChatBox)}
       >
         Chat
       </button>
       <div
-        className={`w-4/12 absolute bottom-5 right-2 ${
+        className={`w-5/12 absolute bottom-5 right-2 ${
           showChatBox ? "h-[500px]" : "h-[0px]"
-        } transition-all delay-200 bg-[#5F4BB6] overflow-hidden rounded-lg`}
+        } transition-all delay-200 bg-[#5F4BB6] overflow-hidden rounded-lg z-50`}
       >
         <div className="flex justify-between h-[10%] w-full p-4">
           <div className="text-white">Chat With Us</div>
@@ -51,7 +69,7 @@ function App() {
             </div>
           ))}
         </div>
-        <div className="flex justify-between items-center h-[15%] w-full p-4 absolute bottom-0">
+        <div className="flex justify-between items-center h-[15%] gap-2 w-full p-4 absolute bottom-0">
           <input
             type="text"
             value={userInput}
@@ -62,6 +80,7 @@ function App() {
           />
           <button
             onClick={handleMessageSend}
+            disabled={isLoading}
             className="p-4 min-w-[100px] bg-blue-500 text-white rounded-md"
           >
             Send
