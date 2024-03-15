@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -9,9 +10,10 @@ function App() {
   const [isLoading, setisLoading] = useState(false);
 
   const handleMessageSend = async () => {
+    const fromCookie = Cookies.get("url");
     try {
       const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/todos/2"
+        `https://jsonplaceholder.typicode.com/todos/${fromCookie}`
       );
       console.log(response.data);
       if (userInput.trim() !== "") {
@@ -32,6 +34,9 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    Cookies.set("url", 5);
+  }, []);
   return (
     <>
       <button
